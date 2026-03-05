@@ -2,9 +2,7 @@ package com.itm.festivos.controladores;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.itm.festivos.servicios.FestivoServicio;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
@@ -19,11 +17,12 @@ public class CalendarioControlador {
     
     @GetMapping("/verificar/{pais}/{anio}/{mes}/{dia}")
     public String verificar(
-            @PathVariable int pais,
-            @PathVariable int anio,
-            @PathVariable int mes,
-            @PathVariable int dia) {
+        @PathVariable int pais,
+        @PathVariable int anio,
+        @PathVariable int mes,
+        @PathVariable int dia) {
 
+    try {
         boolean esFestivo = festivoServicio.esFestivo(anio, mes, dia);
 
         if (esFestivo) {
@@ -31,6 +30,10 @@ public class CalendarioControlador {
         } else {
             return "No es festivo";
         }
+
+    } catch (Exception e) {
+        return "Fecha no válida";
+    }
     }
 
     
@@ -94,7 +97,9 @@ public class CalendarioControlador {
                 tipo = "Laboral";
             }
 
-            calendario.add(fecha + " - " + tipo);
+            String diaSemana = fecha.getDayOfWeek()
+            .getDisplayName(java.time.format.TextStyle.FULL, new java.util.Locale("es", "ES"));
+            calendario.add(fecha + " - " + diaSemana + " - " + tipo);
             fecha = fecha.plusDays(1);
         }
 
