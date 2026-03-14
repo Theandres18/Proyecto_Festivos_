@@ -61,12 +61,29 @@ public class CalendarioControlador {
 
     
     @GetMapping("/generar/{pais}/{anio}")
-    public boolean generarCalendario(
-            @PathVariable int pais,
-            @PathVariable int anio) {
+public boolean generarCalendario(
+        @PathVariable int pais,
+        @PathVariable int anio) {
 
-        return true;
+    LocalDate fecha = LocalDate.of(anio, 1, 1);
+    LocalDate fin = LocalDate.of(anio, 12, 31);
+
+    while (!fecha.isAfter(fin)) {
+
+        boolean esFestivo = festivoServicio.esFestivo(
+                anio,
+                fecha.getMonthValue(),
+                fecha.getDayOfMonth());
+
+        if (esFestivo) {
+            System.out.println(fecha + " - Festivo");
+        }
+
+        fecha = fecha.plusDays(1);
     }
+
+    return true;
+}
 
     
     @GetMapping("/listar/{pais}/{anio}")
